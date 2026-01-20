@@ -50,11 +50,13 @@ function extractLevel(name: string): { baseName: string; level: number } {
         'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10
     };
 
-    const match = name.match(/\s+(I{1,3}|IV|V|VI{0,3}|IX|X)$/);
+    const regex = /\s+(I{1,3}|IV|V|VI{0,3}|IX|X)(?:[\s-].*)?$/;
+    const match = name.match(regex);
+
     if (match) {
         const numeral = match[1];
         const level = romanNumerals[numeral] || 1;
-        const baseName = name.replace(/\s+(I{1,3}|IV|V|VI{0,3}|IX|X)$/, '');
+        const baseName = name.replace(regex, '');
         return { baseName, level };
     }
 
@@ -62,7 +64,10 @@ function extractLevel(name: string): { baseName: string; level: number } {
 }
 
 function getMetaForgeItemUrl(name: string): string {
-    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const slug = name.toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '')
+        .replace(/-+$/, '');
     return `https://metaforge.app/arc-raiders/database/item/${slug}`;
 }
 
@@ -161,18 +166,23 @@ export function WeaponCard({ item: initialItem, variants }: WeaponCardProps) {
                     </div>
 
                     <div className="mt-auto pt-3 flex items-center justify-between border-t border-white/5">
-                        <span className={cn("text-[10px] font-mono uppercase tracking-widest opacity-70", config.text)}>
+                        <span className={cn("text-sm font-mono uppercase tracking-widest font-bold opacity-90", config.text)}>
                             {rarity}
                         </span>
-                        <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground">
+                        <div className="flex items-center gap-3 text-sm font-mono text-muted-foreground">
                             {currentItem.weight !== undefined && (
                                 <span title="Weight">
                                     {currentItem.weight}kg
                                 </span>
                             )}
                             {currentItem.value !== undefined && (
-                                <span className="text-primary/80 flex items-center gap-1" title="Value">
-                                    <span>$</span>{currentItem.value}
+                                <span className="text-primary font-bold flex items-center gap-1.5" title="Value">
+                                    <img
+                                        src="/iconCoins.svg"
+                                        alt="Coins"
+                                        className="w-5 h-5"
+                                    />
+                                    {currentItem.value}
                                 </span>
                             )}
                         </div>

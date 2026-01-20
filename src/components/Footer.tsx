@@ -36,13 +36,25 @@ export function Footer() {
                             </li>
                             <li>
                                 <a
+                                    href="https://lucide.dev/icons/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors w-fit"
+                                >
+                                    <div className="w-1.5 h-1.5 rounded-full bg-border group-hover:bg-primary transition-colors" />
+                                    Lucide (Icons)
+                                    <ExternalLink className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                                </a>
+                            </li>
+                            <li>
+                                <a
                                     href="https://arcraiders.wiki/wiki/Category:Currency_UI_icons"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors w-fit"
                                 >
                                     <div className="w-1.5 h-1.5 rounded-full bg-border group-hover:bg-primary transition-colors" />
-                                    ARC Raiders Wiki (Icons)
+                                    ARC Raiders Wiki (In-game icons)
                                     <ExternalLink className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                                 </a>
                             </li>

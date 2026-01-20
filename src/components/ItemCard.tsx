@@ -79,18 +79,23 @@ export function ItemCard({ item }: ItemCardProps) {
                 </div>
 
                 <div className="mt-auto pt-3 flex items-center justify-between border-t border-white/5">
-                    <span className={cn("text-[10px] font-mono uppercase tracking-widest opacity-70", config.text)}>
+                    <span className={cn("text-sm font-mono uppercase tracking-widest font-bold opacity-90", config.text)}>
                         {rarity}
                     </span>
-                    <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground">
+                    <div className="flex items-center gap-3 text-sm font-mono text-muted-foreground">
                         {item.weight !== undefined && (
                             <span title="Weight">
                                 {item.weight}kg
                             </span>
                         )}
                         {item.value !== undefined && (
-                            <span className="text-primary/80 flex items-center gap-1" title="Value">
-                                <span>$</span>{item.value}
+                            <span className="text-primary font-bold flex items-center gap-1.5" title="Value">
+                                <img
+                                    src="/iconCoins.svg"
+                                    alt="Coins"
+                                    className="w-5 h-5"
+                                />
+                                {item.value}
                             </span>
                         )}
                     </div>
