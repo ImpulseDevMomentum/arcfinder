@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Item } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
@@ -148,15 +149,13 @@ export function WeaponCard({ item: initialItem, variants }: WeaponCardProps) {
                 <div className="p-3 flex-1 flex flex-col gap-2 relative">
                     <div className="flex items-start justify-between gap-2">
                         <h3 className="font-bold text-sm uppercase tracking-wide leading-tight line-clamp-2 text-foreground/90 group-hover:text-foreground transition-colors">
-                            <a
-                                href={getMetaForgeItemUrl(currentItem.name)}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <Link
+                                href={`/items/${currentItem.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+$/, '')}`}
                                 className="hover:text-primary transition-colors"
-                                onClick={(e) => e.stopPropagation()}
+                                onClick={(e: React.MouseEvent) => e.stopPropagation()}
                             >
                                 {baseName}
-                            </a>
+                            </Link>
                             {level > 0 && (
                                 <span className={cn("ml-1 font-mono", config.text)}>
                                     {['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][level]}
@@ -245,7 +244,7 @@ export function WeaponCard({ item: initialItem, variants }: WeaponCardProps) {
                                             <div className="text-sm font-bold truncate group-hover/btn:text-primary transition-colors">
                                                 {variantLevel > 0 ? (
                                                     <span>
-                                                        Level {['', 'I', 'II', 'III', 'IV', 'V'][variantLevel]}
+                                                        Level {['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][variantLevel]}
                                                     </span>
                                                 ) : (
                                                     baseName

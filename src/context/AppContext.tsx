@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { Locale, TranslationKey, Translations, loadTranslations } from "@/lib/translations";
+import { Item } from "@/lib/api";
 
 interface AppContextType {
 
@@ -12,6 +13,8 @@ interface AppContextType {
     theme: "dark" | "light";
     setTheme: (theme: "dark" | "light") => void;
     toggleTheme: () => void;
+    cachedItems: Item[];
+    setCachedItems: (items: Item[]) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -22,6 +25,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const [theme, setThemeState] = useState<"dark" | "light">("dark");
     const [mounted, setMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [cachedItems, setCachedItems] = useState<Item[]>([]);
 
     const loadLocaleTranslations = useCallback(async (loc: Locale) => {
         setIsLoading(true);
@@ -76,7 +80,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <AppContext.Provider value={{ locale, setLocale, t, isLoading, theme, setTheme, toggleTheme }}>
+        <AppContext.Provider value={{ locale, setLocale, t, isLoading, theme, setTheme, toggleTheme, cachedItems, setCachedItems }}>
             {children}
         </AppContext.Provider>
     );

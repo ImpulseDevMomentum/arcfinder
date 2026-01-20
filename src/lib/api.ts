@@ -1,6 +1,13 @@
 // MetaForge ARC Raiders API wrapper
 // https://metaforge.app/arc-raiders/
 
+export interface ItemStats {
+    stackSize?: number;
+    weight?: number;
+    value?: number;
+    [key: string]: unknown;
+}
+
 export interface Item {
     id: string;
     name: string;
@@ -13,7 +20,8 @@ export interface Item {
     value?: number;
     workbench?: string;
     loot_area?: string;
-    stat_block?: Record<string, unknown>;
+    stat_block?: ItemStats;
+    updated_at?: string;
     [key: string]: unknown;
 }
 
@@ -56,6 +64,17 @@ export async function fetchItems(): Promise<Item[]> {
 
     if (!res.ok) {
         throw new Error(`Failed to fetch items: ${res.status}`);
+    }
+
+    return res.json();
+}
+
+export async function fetchItem(id: string): Promise<Item> {
+
+    const res = await fetch(`/api/items/${id}`);
+
+    if (!res.ok) {
+        throw new Error(`Failed to fetch item: ${res.status}`);
     }
 
     return res.json();

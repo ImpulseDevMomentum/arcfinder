@@ -12,6 +12,7 @@ import {
     getUniqueRarities,
     getUniqueTypes,
 } from "@/lib/api";
+
 import { ItemCard } from "@/components/ItemCard";
 import { WeaponCard, groupWeaponsByBase } from "@/components/WeaponCard";
 import { SearchBar } from "@/components/SearchBar";
@@ -44,24 +45,29 @@ const filterConfig: Record<string, {
 };
 
 export function ItemSearch() {
-    const { t } = useApp();
+    const { t, cachedItems, setCachedItems } = useApp();
     const searchParams = useSearchParams();
     const categoryParam = searchParams.get("category");
 
-    const [items, setItems] = useState<Item[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(cachedItems.length === 0);
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
+
+    const items = cachedItems;
     const [rarityFilter, setRarityFilter] = useState("all");
     const [typeFilter, setTypeFilter] = useState("all");
 
     useEffect(() => {
         async function loadItems() {
+            if (cachedItems.length > 0) {
+                setLoading(false);
+                return;
+            }
             try {
                 setLoading(true);
                 setError(null);
                 const data = await fetchItems();
-                setItems(data);
+                setCachedItems(data);
             } catch (err) {
                 setError(err instanceof Error ? err.message : "Failed to load items");
             } finally {
@@ -69,7 +75,7 @@ export function ItemSearch() {
             }
         }
         loadItems();
-    }, []);
+    }, [cachedItems.length, setCachedItems]);
 
     const rarities = useMemo(() => getUniqueRarities(items), [items]);
     const types = useMemo(() => getUniqueTypes(items), [items]);

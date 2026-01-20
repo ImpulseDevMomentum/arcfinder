@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Item } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -74,7 +75,13 @@ export function ItemCard({ item }: ItemCardProps) {
             <div className="p-3 flex-1 flex flex-col gap-2 relative">
                 <div className="flex items-start justify-between gap-2">
                     <h3 className="font-bold text-sm uppercase tracking-wide leading-tight line-clamp-2 text-foreground/90 group-hover:text-foreground transition-colors">
-                        {item.name}
+                        <Link
+                            href={`/items/${item.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+$/, '')}`}
+                            className="hover:text-primary transition-colors"
+                            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        >
+                            {item.name}
+                        </Link>
                     </h3>
                 </div>
 
