@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2, Package, AlertCircle } from "lucide-react";
 import {
@@ -21,6 +21,7 @@ import { SettingsMenu } from "@/components/SettingsMenu";
 import { useApp } from "@/context/AppContext";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { TranslationKey } from "@/lib/translations";
+const ITEMS_PER_PAGE = 84;
 
 const filterConfig: Record<string, {
     types?: string[];
@@ -52,10 +53,14 @@ export function ItemSearch() {
     const [loading, setLoading] = useState(cachedItems.length === 0);
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
+    const [loadingMore, setLoadingMore] = useState(false);
 
     const items = cachedItems;
     const [rarityFilter, setRarityFilter] = useState("all");
     const [typeFilter, setTypeFilter] = useState("all");
+
+    const loadMoreRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         async function loadItems() {
@@ -76,6 +81,10 @@ export function ItemSearch() {
         }
         loadItems();
     }, [cachedItems.length, setCachedItems]);
+
+    useEffect(() => {
+        setDisplayCount(ITEMS_PER_PAGE);
+    }, [searchQuery, rarityFilter, typeFilter, categoryParam]);
 
     const rarities = useMemo(() => getUniqueRarities(items), [items]);
     const types = useMemo(() => getUniqueTypes(items), [items]);
@@ -117,6 +126,39 @@ export function ItemSearch() {
         result = filterByType(result, typeFilter);
         return result;
     }, [items, searchQuery, rarityFilter, typeFilter, categoryParam]);
+
+    const displayedItems = useMemo(() => {
+        return filteredItems.slice(0, displayCount);
+    }, [filteredItems, displayCount]);
+
+    const hasMore = displayCount < filteredItems.length;
+
+    const loadMore = useCallback(() => {
+        if (loadingMore || !hasMore) return;
+
+        setLoadingMore(true);
+        setTimeout(() => {
+            setDisplayCount(prev => Math.min(prev + ITEMS_PER_PAGE, filteredItems.length));
+            setLoadingMore(false);
+        }, 100);
+    }, [loadingMore, hasMore, filteredItems.length]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasMore && !loadingMore) {
+                    loadMore();
+                }
+            },
+            { threshold: 0.1, rootMargin: "200px" }
+        );
+
+        if (loadMoreRef.current) {
+            observer.observe(loadMoreRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, [loadMore, hasMore, loadingMore]);
 
     const getCategoryName = () => {
         if (!categoryParam) return null;
@@ -210,7 +252,7 @@ export function ItemSearch() {
                         {filteredItems.length > 0 ? (
                             categoryParam === "weapon" ? (
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                                    {Array.from(groupWeaponsByBase(filteredItems)).map(([baseName, variants]) => (
+                                    {Array.from(groupWeaponsByBase(displayedItems)).map(([baseName, variants]) => (
                                         <WeaponCard
                                             key={baseName}
                                             item={variants[0]}
@@ -220,7 +262,7 @@ export function ItemSearch() {
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                                    {filteredItems.map((item) => (
+                                    {displayedItems.map((item) => (
                                         <ItemCard key={item.id} item={item} />
                                     ))}
                                 </div>
@@ -234,6 +276,20 @@ export function ItemSearch() {
                                     <p className="text-lg font-medium text-foreground">{t("noItemsFound")}</p>
                                     <p className="text-sm text-muted-foreground">{t("tryAdjustingFilters")}</p>
                                 </div>
+                            </div>
+                        )}
+
+                        {hasMore && (
+                            <div
+                                ref={loadMoreRef}
+                                className="flex justify-center py-8"
+                            >
+                                {loadingMore && (
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        <span className="text-sm font-mono">{t("loading")}...</span>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </>

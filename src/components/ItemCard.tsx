@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Item } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { CachedImage } from "@/components/CachedImage";
 
 interface ItemCardProps {
     item: Item;
@@ -56,10 +57,11 @@ export function ItemCard({ item }: ItemCardProps) {
             <div className={cn("h-0.5 w-full transition-colors duration-300", config.text.replace('text-', 'bg-'))} />
             <div className="aspect-square relative flex items-center justify-center overflow-hidden bg-gradient-to-b from-black/20 to-transparent p-4">
                 {item.icon ? (
-                    <img
+                    <CachedImage
                         src={item.icon}
                         alt={item.name}
                         className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
+                        fallback={<div className="text-4xl opacity-20 grayscale">📦</div>}
                     />
                 ) : (
                     <div className="text-4xl opacity-20 grayscale">📦</div>

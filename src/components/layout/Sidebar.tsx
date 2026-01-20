@@ -16,13 +16,17 @@ import {
     Smile,
     AlertTriangle,
     ChevronDown,
-    Utensils
+    Utensils,
+    Settings,
+    Database,
+    Trash2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import { TranslationKey } from "@/lib/translations";
+import { getCacheStats, clearImageCache } from "@/lib/imageCache";
 
 const CONTROL_VERSION = process.env.CONTROL_VERSION
 
@@ -47,9 +51,31 @@ export function Sidebar() {
     const searchParams = useSearchParams();
     const [isOpen, setIsOpen] = useState(false);
     const [itemsExpanded, setItemsExpanded] = useState(pathname.startsWith("/items"));
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [cacheStats, setCacheStats] = useState<{ count: number; sizeBytes: number } | null>(null);
+    const [clearing, setClearing] = useState(false);
     const { t } = useApp();
 
     const isItemsActive = pathname.startsWith("/items");
+
+    useEffect(() => {
+        if (settingsOpen) {
+            getCacheStats().then(setCacheStats);
+        }
+    }, [settingsOpen]);
+
+    const handleClearCache = async () => {
+        setClearing(true);
+        await clearImageCache();
+        setCacheStats({ count: 0, sizeBytes: 0 });
+        setClearing(false);
+    };
+
+    const formatBytes = (bytes: number) => {
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    };
 
     return (
         <>
@@ -166,8 +192,62 @@ export function Sidebar() {
                         })}
                     </div>
 
-                    <div className="p-4 border-t border-sidebar-border">
-                        <div className="text-xs text-muted-foreground text-center">
+                    <div className="p-3 border-t border-sidebar-border">
+                        <div className={cn(
+                            "overflow-hidden transition-all duration-200 ease-in-out mb-2",
+                            settingsOpen ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
+                        )}>
+                            <div className="p-3 rounded-lg bg-background/50 border border-border/30 space-y-3">
+                                <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                                    <Database className="w-4 h-4" />
+                                    IndexedDB Cache
+                                </div>
+
+                                {cacheStats ? (
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-muted-foreground">Images:</span>
+                                            <span className="font-mono text-foreground">{cacheStats.count}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-muted-foreground">Size:</span>
+                                            <span className="font-mono text-foreground">{formatBytes(cacheStats.sizeBytes)}</span>
+                                        </div>
+                                        <button
+                                            onClick={handleClearCache}
+                                            disabled={clearing || cacheStats.count === 0}
+                                            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-destructive/10 border border-destructive/20 hover:bg-destructive/20 text-destructive text-xs font-mono uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                        >
+                                            <Trash2 className="w-3 h-3" />
+                                            {clearing ? "Clearing..." : "Clear Cache"}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="text-sm text-muted-foreground animate-pulse">
+                                        Loading...
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setSettingsOpen(!settingsOpen)}
+                            className={cn(
+                                "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors group",
+                                settingsOpen
+                                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                            )}
+                        >
+                            <Settings className={cn("h-5 w-5", settingsOpen ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
+                            Settings
+                            <ChevronDown className={cn(
+                                "h-4 w-4 ml-auto transition-transform duration-200",
+                                settingsOpen ? "" : "rotate-180"
+                            )} />
+                        </button>
+
+                        <div className="text-xs text-muted-foreground text-center pt-3">
                             {CONTROL_VERSION}
                         </div>
                     </div>

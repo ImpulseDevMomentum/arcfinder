@@ -5,6 +5,7 @@ import { fetchItem, Item } from "@/lib/api";
 import { ArrowLeft, Heart, Box, Weight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { CachedImage } from "@/components/CachedImage";
 
 export default function ItemDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -79,7 +80,12 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
                 <div className={cn("p-6 rounded-lg border bg-card/40 backdrop-blur-sm space-y-6 self-start", rarityStyle.split(' ')[1])}>
                     <div className="w-full aspect-square bg-black/20 rounded-md border border-white/5 flex items-center justify-center p-8 relative overflow-hidden group">
                         {item.icon ? (
-                            <img src={item.icon} alt={item.name} className="w-full h-full object-contain drop-shadow-2xl group-hover:scale-110 transition-transform duration-500" />
+                            <CachedImage
+                                src={item.icon}
+                                alt={item.name}
+                                className="w-full h-full object-contain drop-shadow-2xl group-hover:scale-110 transition-transform duration-500"
+                                fallback={<span className="text-6xl grayscale opacity-20">📦</span>}
+                            />
                         ) : (
                             <span className="text-6xl grayscale opacity-20">📦</span>
                         )}

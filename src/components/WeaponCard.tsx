@@ -6,6 +6,7 @@ import { Item } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { useApp } from "@/context/AppContext";
+import { CachedImage } from "@/components/CachedImage";
 
 interface WeaponCardProps {
     item: Item;
@@ -120,11 +121,11 @@ export function WeaponCard({ item: initialItem, variants }: WeaponCardProps) {
                 <div className={cn("h-0.5 w-full transition-colors duration-300", config.text.replace('text-', 'bg-'))} />
                 <div className="aspect-square relative flex items-center justify-center overflow-hidden bg-gradient-to-b from-black/20 to-transparent p-4">
                     {currentItem.icon ? (
-                        <img
+                        <CachedImage
                             src={currentItem.icon}
                             alt={currentItem.name}
                             className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
-                            style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
+                            fallback={<div className="text-4xl opacity-20 grayscale">📦</div>}
                         />
                     ) : (
                         <div className="text-4xl opacity-20 grayscale">📦</div>
@@ -230,10 +231,11 @@ export function WeaponCard({ item: initialItem, variants }: WeaponCardProps) {
                                     >
                                         <div className="relative w-12 h-12 flex-shrink-0 bg-muted/20 rounded-md p-1">
                                             {variant.icon ? (
-                                                <img
+                                                <CachedImage
                                                     src={variant.icon}
                                                     alt={variant.name}
                                                     className="w-full h-full object-contain drop-shadow-md"
+                                                    fallback={<div className="w-full h-full flex items-center justify-center text-lg opacity-20 grayscale">📦</div>}
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-lg opacity-20 grayscale">📦</div>
