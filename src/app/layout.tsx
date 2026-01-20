@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { Footer } from "@/components/Footer";
 
-const notoSans = Noto_Sans({ variable: '--font-sans' });
+const notoSans = Noto_Sans({ variable: '--font-sans', subsets: ["latin"] });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "ARC Finder",
-  description: "Wyszukiwarka przedmiotów z gry ARC Raiders",
+  description: "Search, Find, Learn - ARC Raiders Tool",
 };
 
 export default function RootLayout({
@@ -27,10 +29,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl" className={`dark ${notoSans.variable}`} suppressHydrationWarning>
+      <head>
+        <script src="https://cdn.metaforge.app/arcraiders-tooltips.min.js"></script>
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground overflow-hidden`}
       >
-        <AppProvider>{children}</AppProvider>
+        <AppProvider>
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <main className="flex-1 overflow-y-auto relative flex flex-col">
+              <div className="flex-1">
+                {children}
+              </div>
+              <Footer />
+            </main>
+          </div>
+        </AppProvider>
       </body>
     </html>
   );

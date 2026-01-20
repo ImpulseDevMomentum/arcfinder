@@ -1,8 +1,6 @@
 // MetaForge ARC Raiders API wrapper
 // https://metaforge.app/arc-raiders/
 
-const BASE_URL = process.env.METAFORGE_BASE_URL
-
 export interface Item {
     id: string;
     name: string;
@@ -42,6 +40,7 @@ export interface Trader {
     description?: string;
     image?: string;
     location?: string;
+    items?: unknown[];
     [key: string]: unknown;
 }
 
@@ -62,11 +61,8 @@ export async function fetchItems(): Promise<Item[]> {
     return res.json();
 }
 
-// Fetch all ARCs
 export async function fetchArcs(): Promise<Arc[]> {
-    const res = await fetch(`${BASE_URL}/arcs`, {
-        next: { revalidate: 3600 },
-    });
+    const res = await fetch(`/api/arcs`);
 
     if (!res.ok) {
         throw new Error(`Failed to fetch ARCs: ${res.status}`);
@@ -75,11 +71,8 @@ export async function fetchArcs(): Promise<Arc[]> {
     return res.json();
 }
 
-// Fetch all quests
 export async function fetchQuests(): Promise<Quest[]> {
-    const res = await fetch(`${BASE_URL}/quests`, {
-        next: { revalidate: 3600 },
-    });
+    const res = await fetch(`/api/quests`);
 
     if (!res.ok) {
         throw new Error(`Failed to fetch quests: ${res.status}`);
@@ -88,11 +81,8 @@ export async function fetchQuests(): Promise<Quest[]> {
     return res.json();
 }
 
-// Fetch all traders
 export async function fetchTraders(): Promise<Trader[]> {
-    const res = await fetch(`${BASE_URL}/traders`, {
-        next: { revalidate: 3600 },
-    });
+    const res = await fetch(`/api/traders`);
 
     if (!res.ok) {
         throw new Error(`Failed to fetch traders: ${res.status}`);
@@ -101,7 +91,6 @@ export async function fetchTraders(): Promise<Trader[]> {
     return res.json();
 }
 
-// Search items by name
 export function searchItems(items: Item[], query: string): Item[] {
     const lowerQuery = query.toLowerCase().trim();
     if (!lowerQuery) return items;
@@ -115,19 +104,16 @@ export function searchItems(items: Item[], query: string): Item[] {
     );
 }
 
-// Filter items by rarity
 export function filterByRarity(items: Item[], rarity: string): Item[] {
     if (!rarity || rarity === "all") return items;
     return items.filter((item) => item.rarity?.toLowerCase() === rarity.toLowerCase());
 }
 
-// Filter items by type
 export function filterByType(items: Item[], type: string): Item[] {
     if (!type || type === "all") return items;
     return items.filter((item) => item.item_type?.toLowerCase() === type.toLowerCase());
 }
 
-// Get unique rarities from items
 export function getUniqueRarities(items: Item[]): string[] {
     const rarities = new Set<string>();
     items.forEach((item) => {
@@ -136,7 +122,6 @@ export function getUniqueRarities(items: Item[]): string[] {
     return Array.from(rarities).sort();
 }
 
-// Get unique types from items
 export function getUniqueTypes(items: Item[]): string[] {
     const types = new Set<string>();
     items.forEach((item) => {

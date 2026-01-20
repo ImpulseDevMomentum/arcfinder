@@ -18,27 +18,45 @@ export type TranslationKey =
     | "propertyOf"
     | "darkMode"
     | "lightMode"
-    | "language";
+    | "language"
+    | "filters"
+    | "tryAdjustingFilters"
+    | "itemsAll"
+    | "itemsBlueprints"
+    | "itemsKeys"
+    | "itemsWeap"
+    | "itemsStyles"
+    | "itemsEmotes"
+    | "itemsItemsDamaged"
+    | "itemsFoodCon"
+    | "selectLevel";
 
 export type Translations = Record<TranslationKey, string>;
 
 const translationsCache: Partial<Record<Locale, Translations>> = {};
 
 export async function loadTranslations(locale: Locale): Promise<Translations> {
+
     if (translationsCache[locale]) {
         return translationsCache[locale]!;
     }
 
     try {
+
         const response = await fetch(`/lang/${locale}/basic.json`);
+        const translations = await response.json();
+
         if (!response.ok) {
             throw new Error(`Failed to load translations for ${locale}`);
         }
-        const translations = await response.json();
+
         translationsCache[locale] = translations;
+
         return translations;
     } catch (error) {
+
         console.error(`Failed to load translations for ${locale}:`, error);
+
         return {} as Translations;
     }
 }

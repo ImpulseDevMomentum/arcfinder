@@ -16,5 +16,16 @@
     "propertyOf": "ARC Raiders jest własnością Embark Studios.",
     "darkMode": "Tryb ciemny",
     "lightMode": "Tryb jasny",
-    "language": "Język"
+    "language": "Język",
+    "filters": "Filtry",
+    "itemsAll": "Wszystkie",
+    "itemsBlueprints": "Blueprinty",
+    "itemsKeys": "Klucze",
+    "itemsWeap": "Bronie",
+    "itemsStyles": "Style",
+    "itemsEmotes": "Emoci",
+    "itemsItemsDamaged": "Uszkodzone",
+    "itemsFoodCon": "Jedzenie",
+    "selectLevel": "Wybierz poziom",
+    "tryAdjustingFilters": "Spróbuj zmienić filtry lub wyszukać inną frazę."
 }

@@ -1,5 +1,5 @@
-import { ItemSearch } from "@/components/ItemSearch";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-    return <ItemSearch />;
+    redirect("/items");
 }

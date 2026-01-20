@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getCache, setCache, CACHE_KEYS, CACHE_TTL } from "@/lib/redis";
 
 const METAFORGE_BASE_URL = "https://metaforge.app/api/arc-raiders";
 
@@ -16,7 +17,13 @@ interface MetaForgeResponse {
 
 export async function GET() {
     try {
-        // Fetch all pages to get complete item list
+
+        const cached = await getCache<unknown[]>(CACHE_KEYS.ITEMS);
+
+        if (cached) {
+            return NextResponse.json(cached);
+        }
+
         const allItems: unknown[] = [];
         let page = 1;
         let hasNextPage = true;
@@ -40,9 +47,10 @@ export async function GET() {
             hasNextPage = result.pagination.hasNextPage;
             page++;
 
-            // Safety limit to prevent infinite loops
             if (page > 20) break;
         }
+
+        await setCache(CACHE_KEYS.ITEMS, allItems, CACHE_TTL);
 
         return NextResponse.json(allItems);
     } catch (error) {
