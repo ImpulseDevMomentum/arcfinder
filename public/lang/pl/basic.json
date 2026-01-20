@@ -1,0 +1,20 @@
+{
+    "appName": "ARC Finder",
+    "appDescription": "Wyszukiwarka przedmiotów z ARC Raiders",
+    "searchPlaceholder": "Szukaj przedmiotów po nazwie, opisie...",
+    "rarity": "Rzadkość",
+    "type": "Typ",
+    "all": "Wszystkie",
+    "foundItems": "Znaleziono",
+    "items": "przedmiotów",
+    "forQuery": "dla",
+    "noItemsFound": "Nie znaleziono przedmiotów",
+    "clearFilters": "Wyczyść filtry",
+    "loading": "Ładowanie przedmiotów...",
+    "tryAgain": "Spróbuj ponownie",
+    "dataFrom": "Dane pochodzą z",
+    "propertyOf": "ARC Raiders jest własnością Embark Studios.",
+    "darkMode": "Tryb ciemny",
+    "lightMode": "Tryb jasny",
+    "language": "Język"
+}
