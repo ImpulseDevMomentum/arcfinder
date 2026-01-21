@@ -7,8 +7,11 @@ import { QuestCard } from "@/components/QuestCard";
 import { QuestMap } from "@/components/QuestMap";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { cn } from "@/lib/utils";
+import { useApp } from "@/context/AppContext";
+import { SettingsMenu } from "@/components/SettingsMenu";
 
 export default function QuestsPage() {
+    const { t } = useApp();
     const [quests, setQuests] = useState<Quest[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -21,7 +24,7 @@ export default function QuestsPage() {
                 const data = await fetchQuests();
                 setQuests(data);
             } catch (err) {
-                setError(err instanceof Error ? err.message : "Failed to load quests");
+                setError(err instanceof Error ? err.message : t("failedLoadQuests"));
             } finally {
                 setLoading(false);
             }
@@ -32,34 +35,37 @@ export default function QuestsPage() {
     return (
         <div className="min-h-full flex flex-col">
             <PageHeader
-                title="Quests"
-                description="Interactive quest map - drag to pan, scroll to zoom"
+                title={t("questsTitle")}
+                description={t("questsDescription")}
             >
-                <div className="flex items-center gap-1 p-1 bg-background/50 rounded-lg border border-border/30">
-                    <button
-                        onClick={() => setViewMode("map")}
-                        className={cn(
-                            "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                            viewMode === "map"
-                                ? "bg-primary text-primary-foreground"
-                                : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                        )}
-                    >
-                        <Map className="w-4 h-4" />
-                        Map
-                    </button>
-                    <button
-                        onClick={() => setViewMode("list")}
-                        className={cn(
-                            "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                            viewMode === "list"
-                                ? "bg-primary text-primary-foreground"
-                                : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                        )}
-                    >
-                        <List className="w-4 h-4" />
-                        List
-                    </button>
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 p-1 bg-background/50 rounded-lg border border-border/30">
+                        <button
+                            onClick={() => setViewMode("map")}
+                            className={cn(
+                                "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                                viewMode === "map"
+                                    ? "bg-primary text-primary-foreground"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                            )}
+                        >
+                            <Map className="w-4 h-4" />
+                            {t("mapView")}
+                        </button>
+                        <button
+                            onClick={() => setViewMode("list")}
+                            className={cn(
+                                "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                                viewMode === "list"
+                                    ? "bg-primary text-primary-foreground"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                            )}
+                        >
+                            <List className="w-4 h-4" />
+                            {t("listView")}
+                        </button>
+                    </div>
+                    <SettingsMenu />
                 </div>
             </PageHeader>
 
@@ -67,7 +73,7 @@ export default function QuestsPage() {
                 {loading && (
                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                         <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                        <p className="text-muted-foreground font-mono">Loading quests...</p>
+                        <p className="text-muted-foreground font-mono">{t("loadingQuests")}</p>
                     </div>
                 )}
 
@@ -91,7 +97,7 @@ export default function QuestsPage() {
                         ))}
                         {quests.length === 0 && (
                             <div className="col-span-full text-center py-20 text-muted-foreground">
-                                No quests found.
+                                {t("noQuestsFound")}
                             </div>
                         )}
                     </div>

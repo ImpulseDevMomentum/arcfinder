@@ -4,6 +4,7 @@ import { Quest } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Target, Gift } from "lucide-react";
 import { CachedImage } from "./CachedImage";
+import { useApp } from "@/context/AppContext";
 
 interface QuestCardProps {
     quest: Quest;
@@ -18,6 +19,7 @@ const TRADER_COLORS: Record<string, string> = {
 };
 
 export function QuestCard({ quest }: QuestCardProps) {
+    const { t } = useApp();
     const traderColor = quest.trader_name ? TRADER_COLORS[quest.trader_name] || "#6b7280" : "#6b7280";
 
     return (
@@ -64,7 +66,7 @@ export function QuestCard({ quest }: QuestCardProps) {
                     <div className="mt-3 space-y-1">
                         <div className="flex items-center gap-2 text-xs font-mono uppercase text-muted-foreground/70">
                             <Target className="w-3 h-3" />
-                            <span>Objectives</span>
+                            <span>{t("objectives")}</span>
                         </div>
                         <ul className="space-y-1">
                             {quest.objectives.slice(0, 2).map((obj, i) => (
@@ -74,7 +76,7 @@ export function QuestCard({ quest }: QuestCardProps) {
                             ))}
                             {quest.objectives.length > 2 && (
                                 <li className="text-xs text-muted-foreground pl-2">
-                                    +{quest.objectives.length - 2} more...
+                                    +{quest.objectives.length - 2} {t("moreObjectives")}
                                 </li>
                             )}
                         </ul>
@@ -85,7 +87,7 @@ export function QuestCard({ quest }: QuestCardProps) {
                     <div className="mt-auto pt-3 border-t border-border/30">
                         <div className="flex items-center gap-2 text-xs font-mono uppercase text-muted-foreground/70 mb-2">
                             <Gift className="w-3 h-3" />
-                            <span>Rewards</span>
+                            <span>{t("rewards")}</span>
                         </div>
                         <div className="flex gap-1">
                             {quest.rewards.slice(0, 4).map((reward) => (

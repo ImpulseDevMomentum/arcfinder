@@ -5,6 +5,7 @@ import { Loader2, AlertCircle, Store } from "lucide-react";
 import { Trader, fetchTraders } from "@/lib/api";
 import { TraderCard } from "@/components/TraderCard";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { SettingsMenu } from "@/components/SettingsMenu";
 
 export default function TradersPage() {
     const [traders, setTraders] = useState<Trader[]>([]);
@@ -33,7 +34,9 @@ export default function TradersPage() {
             <PageHeader
                 title="Traders"
                 description={`${traders.length} vendors with ${totalItems} items available`}
-            />
+            >
+                <SettingsMenu />
+            </PageHeader>
 
             <main className="container mx-auto px-6 py-8 flex-1">
                 {loading && (

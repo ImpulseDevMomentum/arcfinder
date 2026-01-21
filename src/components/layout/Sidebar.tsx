@@ -202,7 +202,7 @@ export function Sidebar() {
                             >
                                 <div className="flex items-center gap-3">
                                     <Users className={cn("h-5 w-5", isTradersActive ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
-                                    Traders
+                                    {t("traders")}
                                 </div>
                                 <ChevronDown className={cn(
                                     "h-4 w-4 transition-transform duration-200",
@@ -229,7 +229,7 @@ export function Sidebar() {
                                         onClick={() => setIsOpen(false)}
                                     >
                                         <Users className="h-4 w-4 text-muted-foreground" />
-                                        All Traders
+                                        {t("tradersAll")}
                                     </Link>
 
                                     {tradersList.map((trader) => {
@@ -291,17 +291,17 @@ export function Sidebar() {
                             <div className="p-3 rounded-lg bg-background/50 border border-border/30 space-y-3">
                                 <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-muted-foreground">
                                     <Database className="w-4 h-4" />
-                                    Stored Data
+                                    {t("storedData")}
                                 </div>
 
                                 {cacheStats ? (
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-muted-foreground">DB Images:</span>
+                                            <span className="text-muted-foreground">{t("dbImages")}:</span>
                                             <span className="font-mono text-foreground">{cacheStats.count} ({formatBytes(cacheStats.sizeBytes)})</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-muted-foreground">Quests:</span>
+                                            <span className="text-muted-foreground">{t("quests")}:</span>
                                             <span className="font-mono text-foreground">{questCompletedCount}</span>
                                         </div>
                                         <button
@@ -310,7 +310,7 @@ export function Sidebar() {
                                             className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-destructive/10 border border-destructive/20 hover:bg-destructive/20 text-destructive text-xs font-mono uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                         >
                                             <Trash2 className="w-3 h-3" />
-                                            {clearing ? "Clearing..." : "Clear All Data"}
+                                            {clearing ? t("clearing") : t("clearAllData")}
                                         </button>
                                     </div>
                                 ) : (
@@ -331,7 +331,7 @@ export function Sidebar() {
                             )}
                         >
                             <Settings className={cn("h-5 w-5", settingsOpen ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
-                            Settings
+                            {t("settings")}
                             <ChevronDown className={cn(
                                 "h-4 w-4 ml-auto transition-transform duration-200",
                                 settingsOpen ? "" : "rotate-180"

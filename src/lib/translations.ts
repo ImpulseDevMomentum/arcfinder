@@ -29,7 +29,26 @@ export type TranslationKey =
     | "itemsEmotes"
     | "itemsItemsDamaged"
     | "itemsFoodCon"
-    | "selectLevel";
+    | "selectLevel"
+    | "traders"
+    | "tradersAll"
+    | "settings"
+    | "storedData"
+    | "dbImages"
+    | "quests"
+    | "clearAllData"
+    | "clearing"
+    | "questsTitle"
+    | "questsDescription"
+    | "mapView"
+    | "listView"
+    | "loadingQuests"
+    | "failedLoadQuests"
+    | "noQuestsFound"
+    | "objectives"
+    | "rewards"
+    | "moreObjectives"
+    | "moreRewards";
 
 export type Translations = Record<TranslationKey, string>;
 
