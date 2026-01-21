@@ -46,5 +46,12 @@
     "objectives": "Cele",
     "rewards": "Nagrody",
     "moreObjectives": "więcej...",
-    "moreRewards": "więcej"
+    "moreRewards": "więcej",
+    "maps": "Mapy",
+    "mapsAll": "Wszystkie Mapy",
+    "mapDamBattlegrounds": "Dam Battlegrounds",
+    "mapStellaMontis": "Stella Montis",
+    "mapBuriedCity": "Buried City",
+    "mapSpaceport": "Spaceport",
+    "mapTheBlueGate": "The Blue Gate"
 }

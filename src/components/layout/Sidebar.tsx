@@ -19,7 +19,8 @@ import {
     Utensils,
     Settings,
     Database,
-    Trash2
+    Trash2,
+    Map as MapIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,13 +28,14 @@ import { useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import { TranslationKey } from "@/lib/translations";
 import { getCacheStats, clearImageCache } from "@/lib/imageCache";
+import { MAPS } from "@/lib/maps";
 
 const CONTROL_VERSION = process.env.CONTROL_VERSION
 
 const navigation = [
-    { name: "Quests", href: "/quests", icon: Scroll },
-    { name: "ARCs", href: "/arcs", icon: Radio },
-];
+    { nameKey: "questsTitle", href: "/quests", icon: Scroll },
+    { nameKey: "arcs", href: "/arcs", icon: Radio },
+] as const;
 
 const itemCategories: { nameKey: TranslationKey; href: string; icon: typeof FileCode }[] = [
     { nameKey: "itemsBlueprints", href: "/items?category=blueprint", icon: FileCode },
@@ -57,6 +59,7 @@ export function Sidebar() {
     const searchParams = useSearchParams();
     const [isOpen, setIsOpen] = useState(false);
     const [itemsExpanded, setItemsExpanded] = useState(pathname.startsWith("/items"));
+    const [mapsExpanded, setMapsExpanded] = useState(pathname.startsWith("/maps"));
     const [tradersExpanded, setTradersExpanded] = useState(pathname.startsWith("/traders"));
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [cacheStats, setCacheStats] = useState<{ count: number; sizeBytes: number } | null>(null);
@@ -65,6 +68,7 @@ export function Sidebar() {
     const { t } = useApp();
 
     const isItemsActive = pathname.startsWith("/items");
+    const isMapsActive = pathname.startsWith("/maps");
     const isTradersActive = pathname.startsWith("/traders");
 
     useEffect(() => {
@@ -192,6 +196,75 @@ export function Sidebar() {
 
                         <div>
                             <button
+                                onClick={() => setMapsExpanded(!mapsExpanded)}
+                                className={cn(
+                                    "w-full flex items-center justify-between gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors group relative",
+                                    isMapsActive
+                                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                                )}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <MapIcon className={cn("h-5 w-5", isMapsActive ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
+                                    {t("maps")}
+                                </div>
+                                <ChevronDown className={cn(
+                                    "h-4 w-4 transition-transform duration-200",
+                                    mapsExpanded ? "rotate-180" : ""
+                                )} />
+                                {isMapsActive && (
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                                )}
+                            </button>
+
+                            <div className={cn(
+                                "overflow-hidden transition-all duration-200 ease-in-out",
+                                mapsExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                            )}>
+                                <div className="ml-4 mt-1 space-y-1 border-l border-sidebar-border pl-3">
+                                    <Link
+                                        href="/maps"
+                                        className={cn(
+                                            "flex items-center gap-3 px-3 py-1.5 text-sm font-medium rounded-md transition-colors group",
+                                            pathname === "/maps"
+                                                ? "bg-sidebar-accent/50 text-sidebar-accent-foreground"
+                                                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+                                        )}
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <MapIcon className="h-4 w-4 text-muted-foreground" />
+                                        {t("mapsAll")}
+                                    </Link>
+
+                                    {MAPS.map((map) => {
+                                        const isActive = pathname === `/maps/${map.slug}`;
+
+                                        return (
+                                            <Link
+                                                key={map.id}
+                                                href={`/maps/${map.slug}`}
+                                                className={cn(
+                                                    "flex items-center gap-3 px-3 py-1.5 text-sm font-medium rounded-md transition-colors group relative",
+                                                    isActive
+                                                        ? "text-primary bg-primary/10"
+                                                        : "text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+                                                )}
+                                                onClick={() => setIsOpen(false)}
+                                            >
+                                                <MapIcon className={cn("h-4 w-4 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
+                                                {t(map.nameKey)}
+                                                {isActive && (
+                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary rounded-r-full" />
+                                                )}
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button
                                 onClick={() => setTradersExpanded(!tradersExpanded)}
                                 className={cn(
                                     "w-full flex items-center justify-between gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors group relative",
@@ -263,7 +336,7 @@ export function Sidebar() {
                             const isActive = pathname.startsWith(item.href);
                             return (
                                 <Link
-                                    key={item.name}
+                                    key={item.href}
                                     href={item.href}
                                     className={cn(
                                         "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors group relative",
@@ -274,7 +347,7 @@ export function Sidebar() {
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <item.icon className={cn("h-5 w-5", isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
-                                    {item.name}
+                                    {t(item.nameKey as TranslationKey) || item.nameKey}
                                     {isActive && (
                                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
                                     )}
@@ -343,14 +416,15 @@ export function Sidebar() {
                         </div>
                     </div>
                 </div>
-            </aside>
+            </aside >
 
             {isOpen && (
                 <div
                     className="lg:hidden fixed inset-0 z-30 bg-black/50 backdrop-blur-sm"
                     onClick={() => setIsOpen(false)}
                 />
-            )}
+            )
+            }
         </>
     );
 }

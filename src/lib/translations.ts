@@ -48,7 +48,14 @@ export type TranslationKey =
     | "objectives"
     | "rewards"
     | "moreObjectives"
-    | "moreRewards";
+    | "moreRewards"
+    | "maps"
+    | "mapsAll"
+    | "mapDamBattlegrounds"
+    | "mapStellaMontis"
+    | "mapBuriedCity"
+    | "mapSpaceport"
+    | "mapTheBlueGate";
 
 export type Translations = Record<TranslationKey, string>;
 

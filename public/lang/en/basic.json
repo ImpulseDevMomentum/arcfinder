@@ -46,5 +46,12 @@
     "objectives": "Objectives",
     "rewards": "Rewards",
     "moreObjectives": "more...",
-    "moreRewards": "more"
+    "moreRewards": "more",
+    "maps": "Maps",
+    "mapsAll": "All Maps",
+    "mapDamBattlegrounds": "Dam Battlegrounds",
+    "mapStellaMontis": "Stella Montis",
+    "mapBuriedCity": "Buried City",
+    "mapSpaceport": "Spaceport",
+    "mapTheBlueGate": "The Blue Gate"
 }
