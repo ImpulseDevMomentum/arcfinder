@@ -86,20 +86,25 @@ export async function fetchCachedImage(url: string): Promise<string> {
         return cached;
     }
 
+    const isExternal = !url.startsWith('/') && !url.startsWith(window.location.origin);
+
+    if (isExternal) {
+        return url;
+    }
+
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, { mode: 'cors' });
         if (!response.ok) {
-            throw new Error(`Failed to fetch: ${response.status}`);
+            return url;
         }
 
         const blob = await response.blob();
-
         await cacheImage(url, blob);
 
         return URL.createObjectURL(blob);
 
-    } catch (error) {
-        console.error('Failed to fetch image:', error);
+    } catch {
+
         return url;
     }
 }
