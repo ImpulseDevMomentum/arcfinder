@@ -1,17 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, Scroll, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Map, List } from "lucide-react";
 import { Quest, fetchQuests } from "@/lib/api";
 import { QuestCard } from "@/components/QuestCard";
+import { QuestMap } from "@/components/QuestMap";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { useApp } from "@/context/AppContext";
+import { cn } from "@/lib/utils";
 
 export default function QuestsPage() {
-    const { t } = useApp();
     const [quests, setQuests] = useState<Quest[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [viewMode, setViewMode] = useState<"map" | "list">("map");
 
     useEffect(() => {
         async function loadData() {
@@ -32,8 +33,35 @@ export default function QuestsPage() {
         <div className="min-h-full flex flex-col">
             <PageHeader
                 title="Quests"
-                description="Active and available tasks"
-            />
+                description="Interactive quest map - drag to pan, scroll to zoom"
+            >
+                <div className="flex items-center gap-1 p-1 bg-background/50 rounded-lg border border-border/30">
+                    <button
+                        onClick={() => setViewMode("map")}
+                        className={cn(
+                            "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                            viewMode === "map"
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                        )}
+                    >
+                        <Map className="w-4 h-4" />
+                        Map
+                    </button>
+                    <button
+                        onClick={() => setViewMode("list")}
+                        className={cn(
+                            "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                            viewMode === "list"
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                        )}
+                    >
+                        <List className="w-4 h-4" />
+                        List
+                    </button>
+                </div>
+            </PageHeader>
 
             <main className="container mx-auto px-6 py-8 flex-1">
                 {loading && (
@@ -52,7 +80,11 @@ export default function QuestsPage() {
                     </div>
                 )}
 
-                {!loading && !error && (
+                {!loading && !error && viewMode === "map" && (
+                    <QuestMap quests={quests} />
+                )}
+
+                {!loading && !error && viewMode === "list" && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {quests.map((quest) => (
                             <QuestCard key={quest.id} quest={quest} />

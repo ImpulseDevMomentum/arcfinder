@@ -33,12 +33,55 @@ export interface Arc {
     [key: string]: unknown;
 }
 
+export interface QuestRewardItem {
+    id: string;
+    icon: string;
+    name: string;
+    rarity: string;
+    item_type: string;
+}
+
+export interface QuestReward {
+    id: string;
+    item: QuestRewardItem;
+    item_id: string;
+    quantity: string;
+}
+
+export interface QuestRequiredItem {
+    id: string;
+    item: QuestRewardItem;
+    item_id: string;
+    quantity: number;
+}
+
+export interface QuestGrantedItem {
+    id: string;
+    item: QuestRewardItem;
+    item_id: string;
+    quantity: number;
+}
+
+export interface QuestGuideLink {
+    url: string;
+    label: string;
+}
+
 export interface Quest {
     id: string;
     name: string;
     description?: string;
     objectives?: string[];
-    rewards?: unknown[];
+    xp?: number;
+    image?: string;
+    trader_name?: string;
+    position?: { x: number; y: number };
+    rewards?: QuestReward[];
+    required_items?: QuestRequiredItem[];
+    granted_items?: QuestGrantedItem[];
+    guide_links?: QuestGuideLink[];
+    created_at?: string;
+    updated_at?: string;
     [key: string]: unknown;
 }
 

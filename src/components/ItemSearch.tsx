@@ -31,11 +31,15 @@ const filterConfig: Record<string, {
     blueprint: { keywords: ["Blueprint"] },
     key: { keywords: ["Key", "Keycard"] },
     weapon: { types: ["Weapon"] },
-    style: { keywords: ["Style", "Skin", "Camo", "Pattern"] },
+    style: {
+        keywords: ["Style", "Skin", "Camo", "Pattern", "Outfit", "Variant", "Face", "Origin"],
+        types: ["Misc"],
+        exclude: ["Banana", "Emote", "Rock"]
+    },
     emote: {
-        types: ["Emote", "Gesture"],
+        types: ["Misc"],
         keywords: ["Emote", "Dance", "Gesture"],
-        exclude: ["Remote", "Guidance", "System", "Control"]
+        exclude: ["Remote", "Guidance", "System", "Control", "Variant", "Outfit", "Charm", "Hiker", "Renegade", "Aviator", "Backpack", "Origin", "Eye", "Warden", "Rock"]
     },
     damaged: { keywords: ["Damaged", "Broken", "Worn"] },
     consumable: {

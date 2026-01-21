@@ -14,8 +14,7 @@ export function Footer() {
                             <span className="font-bold text-xl tracking-widest text-foreground">ARC FINDER</span>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-                            Your ultimate companion for ARC Raiders.
-                            Advanced database for items, quests, and traders with real-time market data.
+                            Track Quests, Search Items, Explore Maps and much more.
                         </p>
                     </div>
 
@@ -55,6 +54,18 @@ export function Footer() {
                                 >
                                     <div className="w-1.5 h-1.5 rounded-full bg-border group-hover:bg-primary transition-colors" />
                                     ARC Raiders Wiki (In-game icons)
+                                    <ExternalLink className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="https://nulldrop.xyz"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors w-fit"
+                                >
+                                    <div className="w-1.5 h-1.5 rounded-full bg-border group-hover:bg-primary transition-colors" />
+                                    File Hosting (Null Drop)
                                     <ExternalLink className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                                 </a>
                             </li>

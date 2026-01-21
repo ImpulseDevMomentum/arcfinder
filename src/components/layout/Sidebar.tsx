@@ -53,6 +53,7 @@ export function Sidebar() {
     const [itemsExpanded, setItemsExpanded] = useState(pathname.startsWith("/items"));
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [cacheStats, setCacheStats] = useState<{ count: number; sizeBytes: number } | null>(null);
+    const [questCompletedCount, setQuestCompletedCount] = useState<number>(0);
     const [clearing, setClearing] = useState(false);
     const { t } = useApp();
 
@@ -61,13 +62,26 @@ export function Sidebar() {
     useEffect(() => {
         if (settingsOpen) {
             getCacheStats().then(setCacheStats);
+            try {
+                const saved = localStorage.getItem('questComTracker');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    setQuestCompletedCount(Array.isArray(parsed) ? parsed.length : 0);
+                } else {
+                    setQuestCompletedCount(0);
+                }
+            } catch {
+                setQuestCompletedCount(0);
+            }
         }
     }, [settingsOpen]);
 
-    const handleClearCache = async () => {
+    const handleClearAllData = async () => {
         setClearing(true);
         await clearImageCache();
+        localStorage.removeItem('questComTracker');
         setCacheStats({ count: 0, sizeBytes: 0 });
+        setQuestCompletedCount(0);
         setClearing(false);
     };
 
@@ -200,26 +214,26 @@ export function Sidebar() {
                             <div className="p-3 rounded-lg bg-background/50 border border-border/30 space-y-3">
                                 <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-muted-foreground">
                                     <Database className="w-4 h-4" />
-                                    IndexedDB Cache
+                                    Stored Data
                                 </div>
 
                                 {cacheStats ? (
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-muted-foreground">Images:</span>
-                                            <span className="font-mono text-foreground">{cacheStats.count}</span>
+                                            <span className="text-muted-foreground">DB Images:</span>
+                                            <span className="font-mono text-foreground">{cacheStats.count} ({formatBytes(cacheStats.sizeBytes)})</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-muted-foreground">Size:</span>
-                                            <span className="font-mono text-foreground">{formatBytes(cacheStats.sizeBytes)}</span>
+                                            <span className="text-muted-foreground">Quests:</span>
+                                            <span className="font-mono text-foreground">{questCompletedCount}</span>
                                         </div>
                                         <button
-                                            onClick={handleClearCache}
-                                            disabled={clearing || cacheStats.count === 0}
+                                            onClick={handleClearAllData}
+                                            disabled={clearing || (cacheStats.count === 0 && questCompletedCount === 0)}
                                             className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-destructive/10 border border-destructive/20 hover:bg-destructive/20 text-destructive text-xs font-mono uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                         >
                                             <Trash2 className="w-3 h-3" />
-                                            {clearing ? "Clearing..." : "Clear Cache"}
+                                            {clearing ? "Clearing..." : "Clear All Data"}
                                         </button>
                                     </div>
                                 ) : (
