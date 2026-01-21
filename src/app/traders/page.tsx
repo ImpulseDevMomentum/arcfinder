@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, Users, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Store } from "lucide-react";
 import { Trader, fetchTraders } from "@/lib/api";
 import { TraderCard } from "@/components/TraderCard";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -26,11 +26,13 @@ export default function TradersPage() {
         loadData();
     }, []);
 
+    const totalItems = traders.reduce((acc, t) => acc + (t.items?.length || 0), 0);
+
     return (
         <div className="min-h-full flex flex-col">
             <PageHeader
                 title="Traders"
-                description="Vendors and contacts"
+                description={`${traders.length} vendors with ${totalItems} items available`}
             />
 
             <main className="container mx-auto px-6 py-8 flex-1">
@@ -51,16 +53,20 @@ export default function TradersPage() {
                 )}
 
                 {!loading && !error && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {traders.map((trader) => (
-                            <TraderCard key={trader.id} trader={trader} />
-                        ))}
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            {traders.map((trader) => (
+                                <TraderCard key={trader.id} trader={trader} />
+                            ))}
+                        </div>
+
                         {traders.length === 0 && (
-                            <div className="col-span-full text-center py-20 text-muted-foreground">
-                                No traders found.
+                            <div className="flex flex-col items-center justify-center py-20 gap-4 text-muted-foreground">
+                                <Store className="w-12 h-12" />
+                                <p>No traders found.</p>
                             </div>
                         )}
-                    </div>
+                    </>
                 )}
             </main>
         </div>

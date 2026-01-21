@@ -1,0 +1,18 @@
+{
+    "shani": {
+        "items": {
+            "binoculars": {
+                "price": "20",
+                "value": "",
+                "type": "Quick Use",
+                "rarity": "Common"
+            },
+            "raider-hatch-key": {
+                "price": "100",
+                "value": "",
+                "type": "Key",
+                "rarity": "Rare"
+            }
+        }
+    }
+}

@@ -144,13 +144,76 @@ export async function fetchQuests(): Promise<Quest[]> {
 }
 
 export async function fetchTraders(): Promise<Trader[]> {
-    const res = await fetch(`/api/traders`);
+    const [tradersRes, correctionRes] = await Promise.all([
+        fetch(`/api/traders`),
+        fetch(`/traders/traderCorrectionMap.json`).catch(() => null)
+    ]);
 
-    if (!res.ok) {
-        throw new Error(`Failed to fetch traders: ${res.status}`);
+    if (!tradersRes.ok) {
+        throw new Error(`Failed to fetch traders: ${tradersRes.status}`);
     }
 
-    return res.json();
+    const traders: Trader[] = await tradersRes.json();
+
+    if (correctionRes && correctionRes.ok) {
+        try {
+            const corrections = await correctionRes.json();
+
+            const neededItemIds = new Set<string>();
+
+            Object.values(corrections).forEach((correction: any) => {
+                if (correction.items) {
+                    Object.keys(correction.items).forEach(key => neededItemIds.add(key));
+                }
+            });
+
+            const itemsMap = new Map<string, Item>();
+
+            await Promise.all(Array.from(neededItemIds).map(async (id) => {
+                try {
+                    const item = await fetchItem(id);
+                    itemsMap.set(id, item);
+                    itemsMap.set(item.name.toLowerCase(), item);
+                } catch {
+                }
+            }));
+
+            return traders.map(trader => {
+
+                const traderCorrection = corrections[trader.name.toLowerCase()] || corrections[trader.id];
+
+                if (traderCorrection && traderCorrection.items) {
+
+                    const correctedItems = Object.entries(traderCorrection.items).map(([key, data]: [string, any]) => {
+
+                        const baseItem = itemsMap.get(key) || itemsMap.get(key.toLowerCase());
+
+                        return {
+                            id: key,
+                            name: baseItem?.name || key,
+                            icon: baseItem?.icon || "",
+                            description: baseItem?.description || "",
+                            rarity: data.rarity || baseItem?.rarity || "Common",
+                            item_type: data.type || baseItem?.item_type || "Misc",
+                            value: data.value ? parseInt(data.value) : (baseItem?.value || 0),
+                            trader_price: data.price ? parseInt(data.price) : 0,
+                            ...data
+                        };
+                    });
+
+                    return {
+                        ...trader,
+                        items: correctedItems
+                    };
+                }
+                return trader;
+            });
+        } catch (e) {
+            console.error("Failed to apply trader corrections:", e);
+        }
+    }
+
+    return traders;
 }
 
 export function searchItems(items: Item[], query: string): Item[] {
