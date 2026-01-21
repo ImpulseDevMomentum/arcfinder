@@ -25,6 +25,18 @@ module.exports = {
                 hostname: 'd1jgxp05n383qi.cloudfront.net',
                 port: '',
                 pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'cdn.metaforge.app',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'unhbvkszwhczbjxgetgk.supabase.co',
+                port: '',
+                pathname: '/**',
             }
         ],
     },

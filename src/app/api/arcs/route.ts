@@ -6,7 +6,7 @@ const METAFORGE_BASE_URL = process.env.METAFORGE_BASE_URL;
 export async function GET() {
 
     try {
-        const cached = await getCache<unknown[]>(CACHE_KEYS.ARCS);
+        const cached = await getCache<unknown[]>("ARCS_V2");
 
         if (cached) {
             return NextResponse.json(cached);
@@ -32,12 +32,14 @@ export async function GET() {
             data = result;
         } else if (result.data && Array.isArray(result.data)) {
             data = result.data;
+        } else if (result.value && Array.isArray(result.value)) {
+            data = result.value;
         } else {
             console.warn("Unexpected API response structure for arcs:", result);
             data = [];
         }
 
-        await setCache(CACHE_KEYS.ARCS, data, CACHE_TTL);
+        await setCache("ARCS_V2", data, CACHE_TTL);
 
         return NextResponse.json(data);
     } catch (error) {
