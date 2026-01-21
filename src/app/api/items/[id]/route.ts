@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCache, CACHE_KEYS } from "@/lib/redis";
-import { Item } from "@/lib/api";
+import { getItemById } from "@/lib/itemsLoader";
 
 export async function GET(
     request: NextRequest,
@@ -9,28 +8,7 @@ export async function GET(
     const id = (await params).id;
 
     try {
-        let items = await getCache<Item[]>(CACHE_KEYS.ITEMS);
-
-        if (!items) {
-            const baseUrl = request.nextUrl.origin;
-            const res = await fetch(`${baseUrl}/api/items`);
-            if (res.ok) {
-                items = await res.json();
-            }
-        }
-
-        if (!items) {
-            return NextResponse.json(
-                { error: "Items not found" },
-                { status: 404 }
-            );
-        }
-
-        const item = items.find((i: any) =>
-            i.id === id ||
-            i.name.toLowerCase().replace(/\s+/g, '-') === id.toLowerCase() ||
-            i.id.toLowerCase() === id.toLowerCase()
-        );
+        const item = await getItemById(id);
 
         if (!item) {
             return NextResponse.json(

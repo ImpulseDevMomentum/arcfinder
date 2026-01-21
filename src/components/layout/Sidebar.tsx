@@ -32,7 +32,6 @@ const CONTROL_VERSION = process.env.CONTROL_VERSION
 
 const navigation = [
     { name: "Quests", href: "/quests", icon: Scroll },
-    { name: "Traders", href: "/traders", icon: Users },
     { name: "ARCs", href: "/arcs", icon: Radio },
 ];
 
@@ -46,11 +45,19 @@ const itemCategories: { nameKey: TranslationKey; href: string; icon: typeof File
     { nameKey: "itemsFoodCon", href: "/items?category=consumable", icon: Utensils },
 ];
 
+const tradersList = [
+    { name: "Shani", id: "shani" },
+    { name: "Apollo", id: "apollo" },
+    { name: "TianWen", id: "tianwen" },
+    { name: "The Swede", id: "the swede" },
+];
+
 export function Sidebar() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const [isOpen, setIsOpen] = useState(false);
     const [itemsExpanded, setItemsExpanded] = useState(pathname.startsWith("/items"));
+    const [tradersExpanded, setTradersExpanded] = useState(pathname.startsWith("/traders"));
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [cacheStats, setCacheStats] = useState<{ count: number; sizeBytes: number } | null>(null);
     const [questCompletedCount, setQuestCompletedCount] = useState<number>(0);
@@ -58,6 +65,7 @@ export function Sidebar() {
     const { t } = useApp();
 
     const isItemsActive = pathname.startsWith("/items");
+    const isTradersActive = pathname.startsWith("/traders");
 
     useEffect(() => {
         if (settingsOpen) {
@@ -172,6 +180,75 @@ export function Sidebar() {
                                             >
                                                 <item.icon className={cn("h-4 w-4 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
                                                 {t(item.nameKey)}
+                                                {isActive && (
+                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary rounded-r-full" />
+                                                )}
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button
+                                onClick={() => setTradersExpanded(!tradersExpanded)}
+                                className={cn(
+                                    "w-full flex items-center justify-between gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors group relative",
+                                    isTradersActive
+                                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                                )}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <Users className={cn("h-5 w-5", isTradersActive ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
+                                    Traders
+                                </div>
+                                <ChevronDown className={cn(
+                                    "h-4 w-4 transition-transform duration-200",
+                                    tradersExpanded ? "rotate-180" : ""
+                                )} />
+                                {isTradersActive && (
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                                )}
+                            </button>
+
+                            <div className={cn(
+                                "overflow-hidden transition-all duration-200 ease-in-out",
+                                tradersExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                            )}>
+                                <div className="ml-4 mt-1 space-y-1 border-l border-sidebar-border pl-3">
+                                    <Link
+                                        href="/traders"
+                                        className={cn(
+                                            "flex items-center gap-3 px-3 py-1.5 text-sm font-medium rounded-md transition-colors group",
+                                            pathname === "/traders" && !searchParams.get('trader')
+                                                ? "bg-sidebar-accent/50 text-sidebar-accent-foreground"
+                                                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+                                        )}
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <Users className="h-4 w-4 text-muted-foreground" />
+                                        All Traders
+                                    </Link>
+
+                                    {tradersList.map((trader) => {
+                                        const isActive = pathname === `/traders/${trader.id}` || pathname === `/traders/${encodeURIComponent(trader.id)}`;
+
+                                        return (
+                                            <Link
+                                                key={trader.id}
+                                                href={`/traders/${trader.id}`}
+                                                className={cn(
+                                                    "flex items-center gap-3 px-3 py-1.5 text-sm font-medium rounded-md transition-colors group relative",
+                                                    isActive
+                                                        ? "text-primary bg-primary/10"
+                                                        : "text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground"
+                                                )}
+                                                onClick={() => setIsOpen(false)}
+                                            >
+                                                <Users className={cn("h-4 w-4 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary")} />
+                                                {trader.name}
                                                 {isActive && (
                                                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary rounded-r-full" />
                                                 )}
