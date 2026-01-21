@@ -39,7 +39,11 @@ export async function GET(
             );
         }
 
-        return NextResponse.json(item);
+        return NextResponse.json(item, {
+            headers: {
+                'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=1800',
+            },
+        });
 
     } catch (error) {
         console.error("Failed to fetch item:", error);
